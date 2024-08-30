@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Article Detail</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .content-auto {
+          content-visibility: auto;
+        }
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+      }
+      .article-detail {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .article-detail img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin-top: 10px;
+        border-radius: 15px;
+      }
+      .article-detail h1 {
+        margin-top: 0;
+        color: #333;
+        font-size: 28px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <a href="index.html" class="">Back to Articles</a>
+    </div>
+    <div class="article-detail" id="article-detail">
+      <h1>Loading...</h1>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const articleDetailContainer =
+          document.getElementById("article-detail");
+
+        // Get the article ID from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const articleId = urlParams.get("id");
+
+        if (articleId) {
+          // Fetch the article details from the API
+          fetch(`https://sounsoratha.online/cms/items/articles/${articleId}`)
+            .then((response) => response.json())
+            .then((article) => {
+              // Clear the loading message
+              articleDetailContainer.innerHTML = "";
+
+              const titleElement = document.createElement("h1");
+              titleElement.textContent = article.data.title;
+
+              const bodyElement = document.createElement("div");
+              bodyElement.innerHTML = article.data.body;
+
+              const imgElement = document.createElement("img");
+              imgElement.src = `https://sounsoratha.online/cms/assets/${article.data.thumbnail}`;
+
+              // Append the elements to the detail container
+              articleDetailContainer.appendChild(titleElement);
+              articleDetailContainer.appendChild(bodyElement);
+              articleDetailContainer.appendChild(imgElement);
+            })
+            .catch((error) => {
+              console.error("Error fetching the article details:", error);
+              articleDetailContainer.innerHTML =
+                "<p>Error loading article. Please try again later.</p>";
+            });
+        } else {
+          articleDetailContainer.innerHTML = "<p>Invalid article ID.</p>";
+        }
+      });
+    </script>
+  </body>
+</html>
